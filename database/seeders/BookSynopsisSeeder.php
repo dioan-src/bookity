@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\BookSynopsis;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BookSynopsisSeeder extends Seeder
 {
@@ -19,12 +20,16 @@ class BookSynopsisSeeder extends Seeder
         //set flag stopper for while
         $flagStop = random_int(1, Book::count());
         //set counter
-        $counter = 1;
-        while( $counter <= $flagStop ){
-            BookSynopsis::factory()->create([
-                'book_id' => $books->skip($counter-1)->take(1)->first()->id
-            ]);
+        $counter = 1; $bookSynopsisData = [];
+        foreach($books as $book){
+            $bookSynopsisData[] = [
+                'book_id' => $book->id,
+                'synopsis' => fake()->paragraphs(random_int(1, 5),true),
+                ];
             $counter++;
+            if($counter>=$flagStop) break;
         }
+
+        DB::table('book_synopses')->insert($bookSynopsisData);
     }
 }

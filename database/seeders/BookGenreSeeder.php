@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Genre;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BookGenreSeeder extends Seeder
 {
@@ -17,17 +18,21 @@ class BookGenreSeeder extends Seeder
         $books = Book::all();
         $genres = Genre::all();
 
+        $bookGenresData = [];
         foreach($books as $book){
-            $loop = random_int(1, 5);
-            $count = 1;
-            while ($count<=$loop) {
-                $genre = $genres->random();
-                $pivotRecord = $book->genres()->where('genre_id', $genre->id)->first();
-                if (!$pivotRecord) {
-                    $book->genres()->attach($genre->id);
-                    $count++;
-                }
-            }
+            $numberOfGenres = random_int(1, 5);
+            $selectedGenres = ($genres->random($numberOfGenres))->pluck('id');
+            
+            //format data for bulk insertion
+            $bookGenresData = $selectedGenres->map(function ($item) use ($book) {
+                return [
+                    'book_id' => $book->id, 
+                    'genre_id' => $item
+                ];
+            })->toArray();
+            
+            // Insert books data into the database using bulk insertion
+            DB::table('book_genre')->insert($bookGenresData);
         }
     }
 }

@@ -6,7 +6,6 @@ use App\Models\Language;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class LanguageSeeder extends Seeder
 {
@@ -16,17 +15,24 @@ class LanguageSeeder extends Seeder
     public function run(): void
     {
         $csvFile = fopen(base_path("database/data/languages.csv"), "r");
+
+        // Initialize an array to store language data
+        $languages = [];
   
-        $firstline = true;
+        // Skip the first line (header) of the CSV file
+        fgetcsv($csvFile);
+
+        // Read each line of the CSV file and add language data to the array
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
-            if (!$firstline) {
-                Language::create([
-                    "name" => $data['0'],
-                ]);
-            }
-            $firstline = false;
+            $languages[] = [
+                "name" => $data[0]
+            ];
         }
-   
+
+        // Close the CSV file
         fclose($csvFile);
+
+        // Insert language data into the database using bulk insertion
+        DB::table('languages')->insert($languages);
     }
 }

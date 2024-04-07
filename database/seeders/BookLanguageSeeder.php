@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Language;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class BookLanguageSeeder extends Seeder
 {
@@ -14,23 +15,23 @@ class BookLanguageSeeder extends Seeder
      */
     public function run(): void
     {
-        $totalBooks = Book::count();
-        //get a random amount of book
-        $books = Book::inRandomOrder()->limit(random_int((int)($totalBooks*(3/4)), $totalBooks))->get();
-        //get all languages
+        $books = Book::all();
         $languages = Language::all();
 
+        $bookLanguageData = [];
         foreach($books as $book){
-            $loop = random_int(1, 2);
-            $count = 1;
-            while ($count<=$loop) {
-                $language = $languages->random();
-                $pivotRecord = $book->languages()->where('language_id', $language->id)->first();
-                if (!$pivotRecord) {
-                    $book->languages()->attach($language->id);
-                    $count++;
-                }
-            }
+            $numberOfLanguages = random_int(1, 4);
+            $selectedLanguages = $languages->random($numberOfLanguages)->pluck('id');
+
+            //format data for bulk insertion
+            $bookLanguageData = $selectedLanguages->map(function ($item) use ($book) {
+                return [
+                    'book_id' => $book->id, 
+                    'language_id' => $item
+                ];
+            })->toArray();
+
+            DB::table('book_language')->insert($bookLanguageData);
         }
     }
 }
