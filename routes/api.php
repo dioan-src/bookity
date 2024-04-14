@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Resources\BookResource;
+use App\Http\Controllers\BookController;
 use App\Http\Resources\UserResource;
 use App\Models\Book;
 use App\Models\User;
@@ -22,9 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/books', function () {
-    return BookResource::collection(Book::paginate());
-});
+// Resourceful routes for BookController
+Route::resource('books', BookController::class)
+->except(['create', 'edit']);
 
 Route::get('/user/{id}', function(string $id) {
     if(ctype_digit($id)){
