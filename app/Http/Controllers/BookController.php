@@ -14,7 +14,7 @@ class BookController extends Controller
     public function index()
     {
         // Retrieve all books from the database
-        $books = Book::all();
+        $books = Book::with('author','publisher','language','bookType','genres')->get();
 
         // Return the books using the resource
         return BookResource::collection($books)->response()->getData(true);
@@ -33,7 +33,7 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        $book = Book::findOrFail($id);
+        $book = Book::with('author','publisher','language','bookType','genres')->findOrFail($id);
         return BookResource::make($book);
     }
 
