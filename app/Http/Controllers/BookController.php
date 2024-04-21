@@ -8,13 +8,14 @@ use App\Http\Resources\BookResource;
 
 class BookController extends Controller
 {
+    private array $bookRelations = ['author','publisher','language','bookType','genres', 'originalBook'];
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         // Retrieve all books from the database
-        $books = Book::with('author','publisher','language','bookType','genres')->get();
+        $books = Book::with($this->bookRelations)->get();
 
         // Return the books using the resource
         return BookResource::collection($books)->response()->getData(true);
@@ -25,7 +26,7 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //TODO
     }
 
     /**
@@ -33,7 +34,7 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        $book = Book::with('author','publisher','language','bookType','genres')->findOrFail($id);
+        $book = Book::with($this->bookRelations)->findOrFail($id);
         return BookResource::make($book);
     }
 
@@ -42,7 +43,7 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        //TODO
     }
 
     /**
