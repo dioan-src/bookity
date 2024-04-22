@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateBookRequest;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Http\Resources\BookResource;
+use Illuminate\Support\Carbon;
 
 class BookController extends Controller
 {
@@ -18,15 +20,24 @@ class BookController extends Controller
         $books = Book::with($this->bookRelations)->get();
 
         // Return the books using the resource
-        return BookResource::collection($books)->response()->getData(true);
+        return BookResource::collection($books);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateBookRequest $request)
     {
-        //TODO
+        $book = new Book();
+        $book->fill(request()->all());
+
+        $book->save();
+
+        //TODO add book many-to-many relationships i.e. genres
+
+        $book->load($this->bookRelations);
+
+        return BookResource::make($book);
     }
 
     /**

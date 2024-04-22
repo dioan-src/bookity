@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\PublisherController;
 use App\Http\Resources\UserResource;
 use App\Models\Book;
+use App\Models\Publisher;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,3 +40,9 @@ Route::get('/user/{id}', function(string $id) {
 Route::get('/users', function() {
     return UserResource::collection(User::paginate());
 });
+
+Route::resource('publishers', PublisherController::class)
+->except(['create', 'edit']);
+
+Route::resource('authors', AuthorController::class)
+->except(['create', 'edit']);
