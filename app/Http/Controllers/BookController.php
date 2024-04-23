@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CreateBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use App\Http\Resources\BookResource;
@@ -43,27 +44,36 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Book $book)
     {
-        $book = Book::with($this->bookRelations)->findOrFail($id);
         return BookResource::make($book);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBookRequest $request, Book $book)
     {
-        //TODO
+        foreach (request()->all() as $key => $value) {
+            $book->$key = $value;
+        }
+        
+        $book->save();
+
+        //TODO add book many-to-many relationships i.e. genres
+
+        $book->load($this->bookRelations);
+
+        return BookResource::make($book);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Book $book)
     {
-        $book = Book::findOrFail($id);
         $book->delete();
+        
         return response()->json(['messages' => 'Book deleted successfully']);
     }
 }
