@@ -1,0 +1,30 @@
+services:
+  web:
+    image: app-name:latest
+    build:
+      target: web
+      context: .
+    env_file:
+      - .env
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
