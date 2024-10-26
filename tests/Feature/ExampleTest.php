@@ -146,9 +146,4 @@ class ExampleTest extends TestCase
             ]);
         }
     }
-
-    public function test_false(): void
-    {
-        $this->assertEquals(true, false);
-    }
 }
