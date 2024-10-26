@@ -9,6 +9,8 @@ use App\Models\Country;
 use App\Models\Genre;
 use App\Models\Language;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PhpParser\Builder\Function_;
+use PhpParser\Node\Expr\FuncCall;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -143,5 +145,10 @@ class ExampleTest extends TestCase
                 'name' => $language->name,
             ]);
         }
+    }
+
+    public function test_false(): void
+    {
+        $this->assertEquals(true, false);
     }
 }
