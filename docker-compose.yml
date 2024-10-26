@@ -1,0 +1,36 @@
+services:
+  web:
+    image: bookity:latest
+    build:
+      target: web
+      context: .
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db                # Database host set to the name of the db service
+      DB_PORT: 3306              # MySQL default port
+      DB_DATABASE: laravel       # Database name as specified in db service
+      DB_USERNAME: myuser        # MySQL user
+      DB_PASSWORD: mypassword    # MySQL password
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+      
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
